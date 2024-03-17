@@ -48,10 +48,10 @@ namespace WebAPIRestaurant.Core.Application.Services
 
         }
 
-        public virtual async Task<SaveViewModel> GetById(int id)
+        public virtual async Task<ViewModel> GetById(int id)
         {
             Entity entity = await _repository.GetById(id);
-            SaveViewModel saveVm = _mapper.Map<SaveViewModel>(entity);
+            ViewModel saveVm = _mapper.Map<ViewModel>(entity);
             return saveVm;
         }
     }

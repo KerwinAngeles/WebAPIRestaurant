@@ -15,7 +15,7 @@ namespace WebAPIRestaurant.Core.Application.Interfaces.Services
         Task Update(SaveViewModel updateProduct, int id);
         Task Delete(int id);
         Task<List<ViewModel>> GetAll();
-        Task<SaveViewModel> GetById(int id);
+        Task<ViewModel> GetById(int id);
 
     }
 }

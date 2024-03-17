@@ -11,14 +11,11 @@ namespace WebAPIRestaurant.Core.Application.ViewModels.Dishe
 {
     public class SaveDisheViewModel
     {
-        public virtual int Id { get; set; }
         public string? Name { get; set; }
         public int Price { get; set; }
         public int CantPerson { get; set; }
         public string? DisheCategory { get; set; }
-
-        //public int OrdenId { get; set; }
-        //public OrdenViewModel? Orden { get; set; }
+        public int OrdenId { get; set; }
         public List<int> DishesIngredients { get; set; } = new List<int>();
     }
 }

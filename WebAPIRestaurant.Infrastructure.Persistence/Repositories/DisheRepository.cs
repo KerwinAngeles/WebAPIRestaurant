@@ -23,5 +23,11 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Repositories
             var dishes = await _context.Set<Dishe>().Include(x => x.DishesIngredients).ThenInclude(ingredient => ingredient.Ingredient).ToListAsync();
             return dishes;
         }
+
+        public override async Task<Dishe> GetById(int id)
+        {
+            var dishes = await _context.Set<Dishe>().Include(x => x.DishesIngredients).ThenInclude(ingredient => ingredient.Ingredient).ToListAsync();
+            return dishes.FirstOrDefault(x => x.Id == id);
+        }
     }
 }

@@ -11,6 +11,5 @@ namespace WebAPIRestaurant.Core.Application.ViewModels.Ingredient
     {
         public virtual int Id { get; set; } 
         public string? Name { get; set; }
-        public List<DisheIngredient> DishesIngredients { get; set; }
     }
 }

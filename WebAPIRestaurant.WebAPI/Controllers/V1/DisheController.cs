@@ -28,6 +28,23 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             await _disheService.Add(sv);
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Update([FromBody] SaveDisheViewModel sv, int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            await _disheService.Update(sv, id);
+
+            return Ok(sv);
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -39,8 +56,22 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
-           var dishes =  await _disheService.GetAllWithInclude();
+           var dishes =  await _disheService.GetAll();
             return Ok(dishes);
+        }
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var dishe = await _disheService.GetById(id);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            return Ok(dishe);
         }
     }
 }

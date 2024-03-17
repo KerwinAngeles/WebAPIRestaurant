@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WebAPIRestaurant.Core.Application.ViewModels.Dishe;
+using WebAPIRestaurant.Core.Application.ViewModels.DisheIngredient;
 using WebAPIRestaurant.Core.Application.ViewModels.Ingredient;
 using WebAPIRestaurant.Core.Application.ViewModels.Orden;
 using WebAPIRestaurant.Core.Application.ViewModels.Table;
@@ -30,7 +31,7 @@ namespace WebAPIRestaurant.Core.Application.Mappings
 
             #region "Dishe"
             CreateMap<Dishe, DisheViewModel>()
-                .ForMember(x => x.Ingredients, opt => opt.Ignore())
+                .ForMember(x => x.DishesIngredients, opt => opt.Ignore())
                 .ReverseMap()
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
@@ -77,6 +78,18 @@ namespace WebAPIRestaurant.Core.Application.Mappings
                .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                .ForMember(x => x.LastModified, opt => opt.Ignore())
                .ForMember(x => x.LastModifiedBy, opt => opt.Ignore());
+            #endregion
+
+            #region "DisheIngredient"
+            CreateMap<DisheIngredient, DisheIngredientViewModel>()
+                .ReverseMap()
+                .ForMember(x => x.Dishe, opt => opt.Ignore())
+                .ForMember(x => x.Ingredient, opt => opt.Ignore());
+
+            CreateMap<DisheIngredient, SaveDisheIngredientViewModel>()
+              .ReverseMap()
+              .ForMember(x => x.Dishe, opt => opt.Ignore())
+              .ForMember(x => x.Ingredient, opt => opt.Ignore());
             #endregion
         }
 

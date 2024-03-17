@@ -70,7 +70,6 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
-
             return Ok(ingredient);
         }
     }
