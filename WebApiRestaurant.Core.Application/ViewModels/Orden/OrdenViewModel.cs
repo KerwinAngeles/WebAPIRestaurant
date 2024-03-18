@@ -14,7 +14,7 @@ namespace WebAPIRestaurant.Core.Application.ViewModels.Orden
         public virtual int Id { get; set; }
         public int SubTotal { get; set; }
         public string? State { get; set; }
-        public TableViewModel Table { get; set; } = null!;
+        public List<string> DishesNames {  get; set; }
         public ICollection<DisheViewModel> Dishes { get; set; }
     }
 }

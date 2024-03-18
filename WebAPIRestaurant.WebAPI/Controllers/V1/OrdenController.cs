@@ -1,0 +1,89 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using WebAPIRestaurant.Core.Application.Interfaces.Services;
+using WebAPIRestaurant.Core.Application.Services;
+using WebAPIRestaurant.Core.Application.ViewModels.Orden;
+
+namespace WebAPIRestaurant.WebAPI.Controllers.V1
+{
+    [ApiVersion("1.0")]
+    public class OrdenController : BaseApiController
+    {
+        private readonly IOrdenService _ordenService;
+        public OrdenController(IOrdenService ordenService)
+        {
+            _ordenService = ordenService;
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Create(SaveOrdenViewModel sv)
+        {
+            await _ordenService.Add(sv);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return StatusCode(StatusCodes.Status201Created);
+        }
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> List()
+        {
+            var ordens = await _ordenService.GetAll();
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (ordens == null)
+            {
+                return StatusCode(StatusCodes.Status204NoContent, "The ordens it doesn't exist");
+            }
+
+            return Ok(ordens);
+        }
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var orden = await _ordenService.GetById(id);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (orden == null)
+            {
+                return StatusCode(StatusCodes.Status204NoContent, "The orden it doesn't exist");
+            }
+
+            return Ok(orden);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _ordenService.Delete(id);
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return NoContent();
+        }
+    }
+}

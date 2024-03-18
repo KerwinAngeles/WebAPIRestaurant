@@ -33,6 +33,7 @@ namespace WebAPIRestaurant.Core.Application.Mappings
             CreateMap<Dishe, DisheViewModel>()
                 .ForMember(x => x.DishesIngredients, opt => opt.Ignore())
                 .ReverseMap()
+                .ForMember(x => x.OrdenId, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
@@ -49,7 +50,9 @@ namespace WebAPIRestaurant.Core.Application.Mappings
 
             #region "Orden"
             CreateMap<Orden, OrdenViewModel>()
+                
                 .ReverseMap()
+                .ForMember(x => x.Table, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())
@@ -67,6 +70,8 @@ namespace WebAPIRestaurant.Core.Application.Mappings
             #region "Table"
             CreateMap<Table, TableViewModel>()
                 .ReverseMap()
+                .ForMember(x => x.Orden, opt => opt.Ignore())
+                .ForMember(x => x.OrdenId, opt => opt.Ignore())
                 .ForMember(x => x.Created, opt => opt.Ignore())
                 .ForMember(x => x.CreatedBy, opt => opt.Ignore())
                 .ForMember(x => x.LastModified, opt => opt.Ignore())

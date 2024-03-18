@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using WebAPIRestaurant.Core.Application.Interfaces.Repositories;
@@ -15,6 +17,14 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Repositories
         public TableRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public override async Task<Table> GetById(int id)
+        {
+            var table = await _context.Set<Table>()
+                .Include(x => x.Orden)
+                .ThenInclude(x => x.Dishes).ToListAsync();
+            return table.FirstOrDefault(x => x.Id == id);
         }
     }
 }

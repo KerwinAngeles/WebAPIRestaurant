@@ -25,7 +25,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
                 return BadRequest();
             }
             await _ingredientService.Add(sv);
-            return NoContent();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPut]
@@ -57,6 +57,11 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
                 return BadRequest();
             }
 
+            if(ingredients.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status204NoContent, "There is not ingredient");
+            }
+
             return Ok(ingredients);
         }
         [HttpGet("{id}")]
@@ -66,9 +71,14 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         public async Task<IActionResult> GetById(int id)
         {
             var ingredient = await _ingredientService.GetById(id);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest();
+            }
+            if (ingredient == null)
+            {
+                return StatusCode(StatusCodes.Status204NoContent, "The ingredient doesn't exist");
             }
             return Ok(ingredient);
         }
