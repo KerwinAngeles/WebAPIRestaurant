@@ -26,5 +26,11 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Repositories
                 .ThenInclude(x => x.Dishes).ToListAsync();
             return table.FirstOrDefault(x => x.Id == id);
         }
+
+        public async Task<Table> GetByOrdenId(int id)
+        {
+            var table = await _context.Set<Table>().FirstOrDefaultAsync(x => x.OrdenId == id);
+            return table;
+        }
     }
 }

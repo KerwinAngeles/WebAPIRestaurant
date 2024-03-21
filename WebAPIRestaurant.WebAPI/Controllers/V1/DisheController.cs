@@ -25,7 +25,14 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
-            await _disheService.Add(sv);
+            try
+            {
+                await _disheService.Add(sv);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
             return StatusCode(StatusCodes.Status201Created);
         }
 
@@ -39,10 +46,17 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
+            try
+            {
 
-            await _disheService.Update(sv, id);
+                await _disheService.Update(sv, id);
+                return Ok(sv);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
-            return Ok(sv);
         }
 
         [HttpGet]
@@ -57,14 +71,19 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
                 return BadRequest();
             }
 
-            var dishes =  await _disheService.GetAll();
-
-            if(dishes.Count == 0)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "There is not dishes");
+                var dishes = await _disheService.GetAll();
+                if (dishes.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "There is not dishes");
+                }
+                return Ok(dishes);
             }
-
-             return Ok(dishes);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -72,19 +91,24 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(int id)
         {
-            var dishe = await _disheService.GetById(id);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            if(dishe == null)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "The dishe doesn't exist");
+                var dishe = await _disheService.GetById(id);
+                if (dishe == null)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "The dishe doesn't exist");
+                }
+                return Ok(dishe);
             }
-            
-            return Ok(dishe);
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }  
         }
     }
 }

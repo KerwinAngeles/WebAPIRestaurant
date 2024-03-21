@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebAPIRestaurant.Core.Application.Enums;
 using WebAPIRestaurant.Core.Application.Interfaces.Repositories;
 using WebAPIRestaurant.Core.Application.Interfaces.Services;
+using WebAPIRestaurant.Core.Application.ViewModels.Dishe;
 using WebAPIRestaurant.Core.Application.ViewModels.Orden;
 using WebAPIRestaurant.Core.Domain.Entities;
 
@@ -30,21 +31,50 @@ namespace WebAPIRestaurant.Core.Application.Services
         public override async Task Add (SaveOrdenViewModel sv)
         {
             List<Dishe> dishe = await _disheRepository.GetAll();
+            var tableId = await _TableRepository.GetById(sv.TableId);
+
             Orden orden = new Orden();
+
             orden.Id = sv.Id;
             orden.SubTotal = sv.SubTotal;
             orden.State = StateOrden.EnProceso.ToString();
-            orden.Dishes = dishe;
-            var tableId = await _TableRepository.GetById(sv.TableId);
+            orden.Table = tableId;
+            orden.Dishes = new List<Dishe>();
 
-            if(tableId != null)
+            foreach (var item in sv.Dishes)
             {
-                orden.Table = tableId;
+                var dish = dishe.FirstOrDefault(x => x.Id == item);
+                if(dish != null)
+                {
+                    orden.Dishes.Add(dish);
+                }
             }
-            
             await _OrdenRepository.AddAsync(orden);
         }
 
+        public override async Task Update(SaveOrdenViewModel sv, int id)
+        {
+            var orden = await _OrdenRepository.GetById(id);
+            List<Dishe> dishe = await _disheRepository.GetAll();
+
+            if (orden != null)
+            {
+                orden.SubTotal = sv.SubTotal;
+                orden.State = sv.State;
+                orden.Dishes = new List<Dishe>();
+
+                foreach (var item in sv.Dishes)
+                {
+                    var dish = dishe.FirstOrDefault(x => x.Id == item);
+                    if (dish != null)
+                    {
+                        orden.Dishes.Add(dish);
+                    }
+                }
+            }
+
+            await _OrdenRepository.UpdateAsync(orden, id);
+        }
         public override async Task<List<OrdenViewModel>> GetAll()
         {
             var orden = await _OrdenRepository.GetAll();
@@ -54,6 +84,20 @@ namespace WebAPIRestaurant.Core.Application.Services
                 State = x.State,
                 DishesNames = x.Dishes.Select(y => y.Name).ToList()
             }).ToList();
+
+        }
+
+        public override async Task Delete(int id)
+        {
+            var tableOrdenId = await _TableRepository.GetByOrdenId(id);
+
+            var orden = await _OrdenRepository.GetById(id);
+            if(tableOrdenId != null)
+            {
+                orden.Id = (int)tableOrdenId.OrdenId;
+
+            }
+            await _OrdenRepository.DeleteAsync(orden);
         }
 
         public override async Task<OrdenViewModel> GetById(int id)

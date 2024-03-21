@@ -9,6 +9,6 @@ namespace WebAPIRestaurant.Core.Application.Interfaces.Repositories
 {
     public interface ITableRepository : IGenericRepository<Table>
     {
-
+        Task<Table> GetByOrdenId(int id);
     }
 }

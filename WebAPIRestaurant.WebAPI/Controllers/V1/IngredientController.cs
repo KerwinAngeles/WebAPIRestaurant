@@ -24,7 +24,15 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
-            await _ingredientService.Add(sv);
+            try
+            {
+                await _ingredientService.Add(sv);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
             return StatusCode(StatusCodes.Status201Created);
         }
 
@@ -34,14 +42,21 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(SaveIngredientViewModel sv)
         {
-            var searchIngrendient = await _ingredientService.GetById(sv.Id);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            await _ingredientService.Update(sv, searchIngrendient.Id);
-            return Ok(sv);
+            try
+            {
+                var searchIngrendient = await _ingredientService.GetById(sv.Id);
+                await _ingredientService.Update(sv, searchIngrendient.Id);
+                return Ok(sv);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+          
         }
 
         [HttpGet]
@@ -50,19 +65,23 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> List()
         {
-            var ingredients = await _ingredientService.GetAll();
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-
-            if(ingredients.Count == 0)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "There is not ingredient");
+                var ingredients = await _ingredientService.GetAll();
+                if (ingredients.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "There is not ingredient");
+                }
+                return Ok(ingredients);
             }
-
-            return Ok(ingredients);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -70,17 +89,24 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(int id)
         {
-            var ingredient = await _ingredientService.GetById(id);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            if (ingredient == null)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "The ingredient doesn't exist");
+                var ingredient = await _ingredientService.GetById(id);
+                if (ingredient == null)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "The ingredient doesn't exist");
+                }
+                return Ok(ingredient);
             }
-            return Ok(ingredient);
+            catch(Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+
+            }
         }
     }
 }

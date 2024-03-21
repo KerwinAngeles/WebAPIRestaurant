@@ -75,8 +75,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
             modelBuilder.Entity<Orden>()
                 .HasMany<Dishe>(d => d.Dishes)
                 .WithOne(o => o.Orden)
-                .HasForeignKey(o => o.OrdenId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(o => o.OrdenId);
 
             modelBuilder.Entity<Orden>()
                 .HasOne(o => o.Table)

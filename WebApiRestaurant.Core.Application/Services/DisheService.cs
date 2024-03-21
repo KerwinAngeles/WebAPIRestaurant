@@ -35,6 +35,11 @@ namespace WebAPIRestaurant.Core.Application.Services
             dishe.Price = sv.Price;
             dishe.CantPerson = sv.CantPerson;
             dishe.DisheCategory = sv.DisheCategory;
+            if(dishe.OrdenId != null)
+            {
+                dishe.OrdenId = sv.OrdenId;
+
+            }
             dishe.DishesIngredients = disheIngredients;
             await _DisheRepository.AddAsync(dishe);
         }
@@ -54,6 +59,7 @@ namespace WebAPIRestaurant.Core.Application.Services
             {
                 dishe.Name = sv.Name;
                 dishe.Price = sv.Price;
+                dishe.OrdenId = sv.OrdenId;
                 dishe.CantPerson = sv.CantPerson;
                 dishe.DisheCategory= sv.DisheCategory;
                 dishe.DishesIngredients = sv.DishesIngredients.Select(ingredient => new DisheIngredient { IngredientId = ingredient }).ToList();

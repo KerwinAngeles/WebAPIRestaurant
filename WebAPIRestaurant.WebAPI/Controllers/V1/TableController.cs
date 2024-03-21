@@ -24,13 +24,20 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
+            try
+            {
+                await _tableService.Add(sv);
 
-            await _tableService.Add(sv);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
             return StatusCode(StatusCodes.Status201Created);
         }
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(EditSaveViewModel ev, int id)
@@ -40,11 +47,18 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
                 return BadRequest();
             }
 
-            await _tableService.UpdateTable(ev, id);
-            return Ok(ev);
+            try
+            {
+                await _tableService.UpdateTable(ev, id);
+                return Ok(ev);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> List()
@@ -53,56 +67,71 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             {
                 return BadRequest();
             }
-
-            var table = await _tableService.GetAll();
-            if(table.Count == 0)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "There is not table");
+                var table = await _tableService.GetAll();
+                if (table.Count == 0)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "There is not table");
+                }
+                return Ok(table);
             }
-            return Ok(table);
-
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetByid(int id)
         {
-            var table = await _tableService.GetById(id);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-
-            if(table == null)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "The table doesn't exist");
+                var table = await _tableService.GetById(id);
+                if (table == null)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "The table doesn't exist");
+                }
+                return Ok(table);
             }
-            
-            return Ok(table);
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+           
         }
 
         [HttpGet("{tableId}/getTableOrdenById")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetTable(int tableId)
         {
-            var table = await _tableService.GetTableOrden(tableId);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-
-            if (table == null)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent, "orden in proccess it doesn't exist in this table");
+                var table = await _tableService.GetTableOrden(tableId);
+                if (table == null)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent, "orden in proccess it doesn't exist in this table");
+                }
+                return Ok(table);
             }
-
-            return Ok(table);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+           
         }
     }
 }
