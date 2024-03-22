@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPIRestaurant.Core.Application.Interfaces.Services;
 using WebAPIRestaurant.Core.Application.ViewModels.Ingredient;
@@ -7,6 +8,8 @@ using WebAPIRestaurant.Core.Domain.Entities;
 namespace WebAPIRestaurant.WebAPI.Controllers.V1
 {
     [ApiVersion("1.0")]
+    [Authorize(Roles = "Administrator")]
+    
     public class IngredientController : BaseApiController
     {
         private readonly IIngredientService _ingredientService;
@@ -18,6 +21,8 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+
         public async Task<IActionResult> Create(SaveIngredientViewModel sv)
         {
             if (!ModelState.IsValid)
@@ -40,6 +45,8 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+
         public async Task<IActionResult> Update(SaveIngredientViewModel sv)
         {
             if (!ModelState.IsValid)
@@ -63,6 +70,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> List()
         {
             if (!ModelState.IsValid)
@@ -87,6 +95,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetById(int id)
         {
             if (!ModelState.IsValid)

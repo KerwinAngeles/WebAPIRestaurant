@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPIRestaurant.Core.Application.Interfaces.Services;
 using WebAPIRestaurant.Core.Application.Services;
@@ -7,6 +8,7 @@ using WebAPIRestaurant.Core.Application.ViewModels.Dishe;
 namespace WebAPIRestaurant.WebAPI.Controllers.V1
 {
     [ApiVersion("1.0")]
+    //[Authorize(Roles = "Administrator")]
     public class DisheController : BaseApiController
     {
         private readonly IDisheService _disheService;

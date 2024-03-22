@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using WebAPIRestaurant.Core.Application.Dtos.Account;
+using WebAPIRestaurant.Core.Application.Interfaces.Services;
+using WebAPIRestaurant.Infrastructure.Identity.Services;
 
 namespace WebAPIRestaurant.Infrastructure.Identity
 {
@@ -85,6 +87,10 @@ namespace WebAPIRestaurant.Infrastructure.Identity
 
             });
 
+            #endregion
+
+            #region "Service"
+            services.AddTransient<IAccountService, AccountService>();
             #endregion
         }
     }

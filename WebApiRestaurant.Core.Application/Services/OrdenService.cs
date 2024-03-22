@@ -49,10 +49,12 @@ namespace WebAPIRestaurant.Core.Application.Services
                     orden.Dishes.Add(dish);
                 }
             }
-            await _OrdenRepository.AddAsync(orden);
+            //await _OrdenRepository.AddAsync(orden);
+            await base.Add(sv);
+
         }
 
-        public override async Task Update(SaveOrdenViewModel sv, int id)
+        public async Task UpdateOrden(EditViewModel sv, int id)
         {
             var orden = await _OrdenRepository.GetById(id);
             List<Dishe> dishe = await _disheRepository.GetAll();
@@ -97,33 +99,27 @@ namespace WebAPIRestaurant.Core.Application.Services
                 orden.Id = (int)tableOrdenId.OrdenId;
 
             }
-            await _OrdenRepository.DeleteAsync(orden);
+            //await _OrdenRepository.DeleteAsync(orden);
+            await base.Delete(id);
         }
 
         public override async Task<OrdenViewModel> GetById(int id)
         {
             var orden = await _OrdenRepository.GetById(id);
-            try
-            {
-                if(orden != null)
-                {
-                    OrdenViewModel ordenViewModel = new();
-                    ordenViewModel.SubTotal = orden.SubTotal;
-                    ordenViewModel.State = orden.State;
-                    ordenViewModel.DishesNames = orden.Dishes.Select(x => x.Name).ToList();
-                    return ordenViewModel;
-                }
-                else
-                {
-                    return null;
-                }
 
-              
-            }
-            catch(Exception ex) 
+            if (orden != null)
             {
-                throw new Exception(ex.Message);
+                OrdenViewModel ordenViewModel = new();
+                ordenViewModel.SubTotal = orden.SubTotal;
+                ordenViewModel.State = orden.State;
+                ordenViewModel.DishesNames = orden.Dishes.Select(x => x.Name).ToList();
+                return ordenViewModel;
             }
+            else
+            {
+                return null;
+            }
+
         }
     }
 }

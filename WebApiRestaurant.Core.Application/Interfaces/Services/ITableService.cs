@@ -13,5 +13,6 @@ namespace WebAPIRestaurant.Core.Application.Interfaces.Services
     {
         Task UpdateTable(EditSaveViewModel ev, int id);
         Task<OrdenViewModel> GetTableOrden(int id);
+        Task ChangeStatus(int tableId, int statusId);
     }
 }

@@ -21,6 +21,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<DisheIngredient> DishesIngredients { get; set; }
+        public DbSet<Status> Status { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -50,6 +51,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
             modelBuilder.Entity<Ingredient>().ToTable("Ingredients");
             modelBuilder.Entity<Table>().ToTable("Tables");
             modelBuilder.Entity<DisheIngredient>().ToTable("DishesIngredients");
+            modelBuilder.Entity<Status>().ToTable("Status");
             #endregion
 
             #region "Primary Key"
@@ -57,6 +59,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
             modelBuilder.Entity<Orden>().HasKey(o => o.Id);
             modelBuilder.Entity<Ingredient>().HasKey(i => i.Id);
             modelBuilder.Entity<Table>().HasKey(t => t.Id);
+            modelBuilder.Entity<Status>().HasKey(s => s.Id);
             modelBuilder.Entity<DisheIngredient>().HasKey(di => new { di.DisheId, di.IngredientId });
             #endregion
 
@@ -82,8 +85,23 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
                 .WithOne(m => m.Orden)
                 .HasForeignKey<Table>(t => t.OrdenId);
 
+            modelBuilder.Entity<Status>()
+                .HasOne(t => t.Table)
+                .WithOne(s => s.Status)
+                .HasForeignKey<Table>(t => t.StatusId)
+                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
+            #region "Data"
+            modelBuilder.Entity<Status>()
+                .HasData(
+
+                new Status { Id = 1, Name = "Disponible"},
+                new Status { Id = 2, Name = "En proceso de atencion"},
+                new Status { Id = 3, Name = "Atendida"}
+
+                );
+            #endregion
             base.OnModelCreating(modelBuilder);
         }
     }

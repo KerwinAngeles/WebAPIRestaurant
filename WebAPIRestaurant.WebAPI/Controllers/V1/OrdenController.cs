@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using WebAPIRestaurant.Core.Application.Interfaces.Services;
@@ -8,6 +9,8 @@ using WebAPIRestaurant.Core.Application.ViewModels.Orden;
 namespace WebAPIRestaurant.WebAPI.Controllers.V1
 {
     [ApiVersion("1.0")]
+    [Authorize(Roles = "Waiter")]
+
     public class OrdenController : BaseApiController
     {
         private readonly IOrdenService _ordenService;
@@ -44,7 +47,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(SaveOrdenViewModel sv, int id)
+        public async Task<IActionResult> Update(EditViewModel sv, int id)
         {
             if (!ModelState.IsValid)
             {
@@ -53,7 +56,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
 
             try
             {
-                await _ordenService.Update(sv, id);
+                await _ordenService.UpdateOrden(sv, id);
 
             }
             catch (Exception ex)

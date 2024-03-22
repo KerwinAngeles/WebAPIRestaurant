@@ -10,5 +10,6 @@ namespace WebAPIRestaurant.Core.Application.Interfaces.Services
 {
     public interface IOrdenService : IGenericService<SaveOrdenViewModel, OrdenViewModel, Orden>
     {
+        Task UpdateOrden(EditViewModel sv, int id);
     }
 }

@@ -12,7 +12,7 @@ using WebAPIRestaurant.Infrastructure.Persistence.Context;
 namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240311210816_Initial")]
+    [Migration("20240322002051_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,7 +54,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrdenId")
+                    b.Property<int?>("OrdenId")
                         .HasColumnType("int");
 
                     b.Property<int>("Price")
@@ -141,6 +141,40 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.ToTable("Ordens", (string)null);
                 });
 
+            modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Status", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Status", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Disponible"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "En proceso de atencion"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Atendida"
+                        });
+                });
+
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Table", b =>
                 {
                     b.Property<int>("Id")
@@ -167,15 +201,22 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrdenId")
+                    b.Property<int?>("OrdenId")
                         .HasColumnType("int");
 
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrdenId")
+                        .IsUnique()
+                        .HasFilter("[OrdenId] IS NOT NULL");
+
+                    b.HasIndex("StatusId")
                         .IsUnique();
 
                     b.ToTable("Tables", (string)null);
@@ -185,9 +226,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Orden", "Orden")
                         .WithMany("Dishes")
-                        .HasForeignKey("OrdenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrdenId");
 
                     b.Navigation("Orden");
                 });
@@ -215,11 +254,17 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Orden", "Orden")
                         .WithOne("Table")
-                        .HasForeignKey("WebAPIRestaurant.Core.Domain.Entities.Table", "OrdenId")
+                        .HasForeignKey("WebAPIRestaurant.Core.Domain.Entities.Table", "OrdenId");
+
+                    b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Status", "Status")
+                        .WithOne("Table")
+                        .HasForeignKey("WebAPIRestaurant.Core.Domain.Entities.Table", "StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Orden");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Dishe", b =>
@@ -236,6 +281,12 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Dishes");
 
+                    b.Navigation("Table")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Status", b =>
+                {
                     b.Navigation("Table")
                         .IsRequired();
                 });

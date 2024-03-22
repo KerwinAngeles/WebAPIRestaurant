@@ -41,7 +41,8 @@ namespace WebAPIRestaurant.Core.Application.Services
 
             }
             dishe.DishesIngredients = disheIngredients;
-            await _DisheRepository.AddAsync(dishe);
+            //await _DisheRepository.AddAsync(dishe);
+            await base.Add(sv);
         }
 
         public override async Task Update(SaveDisheViewModel sv, int id)

@@ -11,5 +11,6 @@ namespace WebAPIRestaurant.Core.Application.Interfaces.Services
     {
         Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
         Task<RegisterResponse> RegisterWaiterAsync(RegisterRequest request);
+        Task<RegisterResponse> RegisterAdministratorAsync(RegisterRequest request);
     }
 }

@@ -12,7 +12,7 @@ namespace WebAPIRestaurant.Core.Application.ViewModels.Table
         public virtual int Id { get; set; }
         public int CantPerson { get; set; }
         public string? Description { get; set; }
-        public string? State { get; set; }
+        public string? StatusName { get; set; }
        
     }
 }

@@ -11,8 +11,9 @@ namespace WebAPIRestaurant.Core.Domain.Entities
     {
         public int CantPerson {  get; set; }
         public string? Description { get; set; }
-        public string? State { get; set; }
         public int? OrdenId { get; set; }
         public Orden? Orden { get; set; }
+        public int StatusId { get; set; }
+        public Status? Status { get; set; }
     }
 }

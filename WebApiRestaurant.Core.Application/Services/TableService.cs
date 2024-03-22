@@ -27,6 +27,17 @@ namespace WebAPIRestaurant.Core.Application.Services
             _mapper = mapper;
         }
 
+        public override async Task Add(SaveTableViewModel viewModel)
+        {
+            Table table = new Table();
+            table.Id = viewModel.Id;
+            table.CantPerson = viewModel.CantPerson;
+            table.Description = viewModel.Description;
+            table.StatusId = viewModel.StatusId;
+
+            await base.Add(viewModel);
+        }
+
         public async Task UpdateTable(EditSaveViewModel ev, int id)
         {
             var table = await _TableRepository.GetById(id);
@@ -45,6 +56,27 @@ namespace WebAPIRestaurant.Core.Application.Services
             ovm.DishesNames = table.Orden.Dishes.Select(d => d.Name).ToList();
 
             return ovm;
+        }
+
+        public async Task ChangeStatus(int tableId, int statusId)
+        {
+            var table = await _TableRepository.GetById(tableId);
+            table.Id = tableId;
+            table.StatusId = statusId;
+            await _TableRepository.UpdateAsync(table, tableId);
+        }
+
+        public override async Task<List<TableViewModel>> GetAll()
+        {
+            var table = await _TableRepository.GetAll();
+            return table.Select( x => new TableViewModel 
+            {
+                Id = x.Id,
+                CantPerson = x.CantPerson,
+                Description = x.Description,
+                StatusName = x.Status.Name
+
+            }).ToList();
         }
     }
 }

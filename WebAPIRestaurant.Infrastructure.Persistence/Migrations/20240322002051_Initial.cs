@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -47,6 +49,19 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Status",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Status", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Dishes",
                 columns: table => new
                 {
@@ -56,7 +71,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     Price = table.Column<int>(type: "int", nullable: false),
                     CantPerson = table.Column<int>(type: "int", nullable: false),
                     DisheCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrdenId = table.Column<int>(type: "int", nullable: false),
+                    OrdenId = table.Column<int>(type: "int", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -69,8 +84,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                         name: "FK_Dishes_Ordens_OrdenId",
                         column: x => x.OrdenId,
                         principalTable: "Ordens",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -82,7 +96,8 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     CantPerson = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrdenId = table.Column<int>(type: "int", nullable: false),
+                    OrdenId = table.Column<int>(type: "int", nullable: true),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -95,6 +110,11 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                         name: "FK_Tables_Ordens_OrdenId",
                         column: x => x.OrdenId,
                         principalTable: "Ordens",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tables_Status_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Status",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -123,6 +143,16 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Status",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Disponible" },
+                    { 2, "En proceso de atencion" },
+                    { 3, "Atendida" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Dishes_OrdenId",
                 table: "Dishes",
@@ -137,6 +167,13 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                 name: "IX_Tables_OrdenId",
                 table: "Tables",
                 column: "OrdenId",
+                unique: true,
+                filter: "[OrdenId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tables_StatusId",
+                table: "Tables",
+                column: "StatusId",
                 unique: true);
         }
 
@@ -154,6 +191,9 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ingredients");
+
+            migrationBuilder.DropTable(
+                name: "Status");
 
             migrationBuilder.DropTable(
                 name: "Ordens");

@@ -32,5 +32,13 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Repositories
             var table = await _context.Set<Table>().FirstOrDefaultAsync(x => x.OrdenId == id);
             return table;
         }
+
+        public override async Task<List<Table>> GetAll()
+        {
+            var table = await _context.Set<Table>()
+                .Include(x => x.Status).ToListAsync();
+
+            return table;
+        }
     }
 }

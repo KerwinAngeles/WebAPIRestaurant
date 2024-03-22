@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPIRestaurant.Core.Application.Interfaces.Services;
 using WebAPIRestaurant.Core.Application.ViewModels.Table;
@@ -15,6 +16,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -37,6 +39,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             return StatusCode(StatusCodes.Status201Created);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -58,6 +61,8 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             }
         }
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Waiter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -83,6 +88,8 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Waiter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -109,6 +116,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         }
 
         [HttpGet("{tableId}/getTableOrdenById")]
+        [Authorize(Roles = "Waiter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -132,6 +140,28 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
            
+        }
+
+        [HttpPatch("ChangeStatus")]
+        [Authorize(Roles = "Waiter")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ChangeStatus(int id, int statusId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                await _tableService.ChangeStatus(id, statusId);
+
+            }catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+
+            }
+            return NoContent();
         }
     }
 }
