@@ -12,7 +12,7 @@ namespace WebAPIRestaurant.Core.Domain.Entities
         public int SubTotal { get; set; }
         public string? State { get; set; }
         public Table Table { get; set; } = null!;
-        public ICollection<Dishe> Dishes { get; set; }
+        public ICollection<DishesOrden> DishesOrden { get; set; }
 
     }
 }

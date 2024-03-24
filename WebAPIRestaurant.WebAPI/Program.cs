@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using WebAPIRestaurant.Infrastructure.Identity.Entities;
 using WebAPIRestaurant.Infrastructure.Identity.Seeds;
 using WebAPIRestaurant.WebAPI.Extensions;
+using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +20,10 @@ builder.Services.AddApplicationLayer();
 builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerExtension();
 builder.Services.AddApiVersionExtension();
+builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 
 var app = builder.Build();
 

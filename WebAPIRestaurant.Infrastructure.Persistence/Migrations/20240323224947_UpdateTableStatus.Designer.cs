@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPIRestaurant.Infrastructure.Persistence.Context;
 
@@ -11,9 +12,11 @@ using WebAPIRestaurant.Infrastructure.Persistence.Context;
 namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240323224947_UpdateTableStatus")]
+    partial class UpdateTableStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,10 +54,15 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("OrdenId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrdenId");
 
                     b.ToTable("Dishes", (string)null);
                 });
@@ -72,21 +80,6 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.HasIndex("IngredientId");
 
                     b.ToTable("DishesIngredients", (string)null);
-                });
-
-            modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.DishesOrden", b =>
-                {
-                    b.Property<int>("DishesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrdensId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DishesId", "OrdensId");
-
-                    b.HasIndex("OrdensId");
-
-                    b.ToTable("DishesOrden");
                 });
 
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Ingredient", b =>
@@ -225,6 +218,15 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.ToTable("Tables", (string)null);
                 });
 
+            modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Dishe", b =>
+                {
+                    b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Orden", "Orden")
+                        .WithMany("Dishes")
+                        .HasForeignKey("OrdenId");
+
+                    b.Navigation("Orden");
+                });
+
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.DisheIngredient", b =>
                 {
                     b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Dishe", "Dishe")
@@ -242,25 +244,6 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
                     b.Navigation("Dishe");
 
                     b.Navigation("Ingredient");
-                });
-
-            modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.DishesOrden", b =>
-                {
-                    b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Dishe", "Dishe")
-                        .WithMany("DishesOrdens")
-                        .HasForeignKey("DishesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebAPIRestaurant.Core.Domain.Entities.Orden", "Orden")
-                        .WithMany("DishesOrden")
-                        .HasForeignKey("OrdensId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Dishe");
-
-                    b.Navigation("Orden");
                 });
 
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Table", b =>
@@ -283,8 +266,6 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Dishe", b =>
                 {
                     b.Navigation("DishesIngredients");
-
-                    b.Navigation("DishesOrdens");
                 });
 
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Ingredient", b =>
@@ -294,7 +275,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("WebAPIRestaurant.Core.Domain.Entities.Orden", b =>
                 {
-                    b.Navigation("DishesOrden");
+                    b.Navigation("Dishes");
 
                     b.Navigation("Table")
                         .IsRequired();

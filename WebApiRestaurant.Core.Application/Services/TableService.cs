@@ -35,7 +35,7 @@ namespace WebAPIRestaurant.Core.Application.Services
             table.Description = viewModel.Description;
             table.StatusId = viewModel.StatusId;
 
-            await base.Add(viewModel);
+            await _TableRepository.AddAsync(table);
         }
 
         public async Task UpdateTable(EditSaveViewModel ev, int id)
@@ -43,6 +43,7 @@ namespace WebAPIRestaurant.Core.Application.Services
             var table = await _TableRepository.GetById(id);
             table.CantPerson = ev.CantPerson;
             table.Description = ev.Description;
+
             await _TableRepository.UpdateAsync(table, id);
         }
 
@@ -51,11 +52,22 @@ namespace WebAPIRestaurant.Core.Application.Services
             var table = await _TableRepository.GetById(id);
 
             OrdenViewModel ovm = new OrdenViewModel();
+            ovm.Id = id;
             ovm.SubTotal = table.Orden.SubTotal;
             ovm.State = table.Orden.State;
-            ovm.DishesNames = table.Orden.Dishes.Select(d => d.Name).ToList();
-
+            ovm.DishesNames = table.Orden.DishesOrden.Select(x => x.Dishe.Name).ToList();
             return ovm;
+        }
+
+        public override async Task<TableViewModel> GetById(int id)
+        {
+            var table = await _TableRepository.GetById(id);
+            TableViewModel tbm = new TableViewModel();
+            tbm.Id = id;
+            tbm.CantPerson = table.CantPerson;
+            tbm.Description = table.Description;
+            tbm.StatusName = table.Status.Name;
+            return tbm;
         }
 
         public async Task ChangeStatus(int tableId, int statusId)

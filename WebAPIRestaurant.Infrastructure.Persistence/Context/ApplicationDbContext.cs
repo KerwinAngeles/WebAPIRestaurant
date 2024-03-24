@@ -21,6 +21,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<DisheIngredient> DishesIngredients { get; set; }
+        public DbSet<DishesOrden> DishesOrden { get; set; }
         public DbSet<Status> Status { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -51,6 +52,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
             modelBuilder.Entity<Ingredient>().ToTable("Ingredients");
             modelBuilder.Entity<Table>().ToTable("Tables");
             modelBuilder.Entity<DisheIngredient>().ToTable("DishesIngredients");
+            modelBuilder.Entity<DishesOrden>().ToTable("DishesOrden");
             modelBuilder.Entity<Status>().ToTable("Status");
             #endregion
 
@@ -61,6 +63,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
             modelBuilder.Entity<Table>().HasKey(t => t.Id);
             modelBuilder.Entity<Status>().HasKey(s => s.Id);
             modelBuilder.Entity<DisheIngredient>().HasKey(di => new { di.DisheId, di.IngredientId });
+            modelBuilder.Entity<DishesOrden>().HasKey(od => new { od.DishesId, od.OrdensId });
             #endregion
 
             #region "Relationship"
@@ -75,10 +78,15 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
               .WithMany(d => d.DishesIngredients)
               .HasForeignKey(di => di.DisheId);
 
-            modelBuilder.Entity<Orden>()
-                .HasMany<Dishe>(d => d.Dishes)
-                .WithOne(o => o.Orden)
-                .HasForeignKey(o => o.OrdenId);
+            modelBuilder.Entity<DishesOrden>()
+                 .HasOne(od => od.Dishe)
+                 .WithMany(o => o.DishesOrdens)
+                 .HasForeignKey(od => od.DishesId);
+
+            modelBuilder.Entity<DishesOrden>()
+                .HasOne(od => od.Orden)
+                .WithMany(d => d.DishesOrden)
+                .HasForeignKey(od => od.OrdensId);
 
             modelBuilder.Entity<Orden>()
                 .HasOne(o => o.Table)
@@ -86,9 +94,9 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Context
                 .HasForeignKey<Table>(t => t.OrdenId);
 
             modelBuilder.Entity<Status>()
-                .HasOne(t => t.Table)
+                .HasMany(t => t.Tables)
                 .WithOne(s => s.Status)
-                .HasForeignKey<Table>(t => t.StatusId)
+                .HasForeignKey(t => t.StatusId)
                 .OnDelete(DeleteBehavior.Cascade);
             #endregion
 

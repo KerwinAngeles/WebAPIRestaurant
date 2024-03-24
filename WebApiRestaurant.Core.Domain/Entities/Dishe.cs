@@ -13,9 +13,8 @@ namespace WebAPIRestaurant.Core.Domain.Entities
         public int Price { get; set; }
         public int CantPerson {  get; set; }
         public string? DisheCategory { get; set; }
-        public int? OrdenId { get; set; }
-        public Orden? Orden { get; set; }
         public ICollection<DisheIngredient> DishesIngredients { get; set; }
+        public ICollection<DishesOrden> DishesOrdens { get; set; }
 
     }
 }

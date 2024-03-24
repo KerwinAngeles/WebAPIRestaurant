@@ -26,8 +26,7 @@ namespace WebAPIRestaurant.Infrastructure.Persistence
             services.AddTransient<IOrdenRepository, OrdenRepository>();
             services.AddTransient<ITableRepository, TableRepository>();
             services.AddTransient<IDisheIngredientRepositorycs, DisheIngredientRepository>();
-
-
+            services.AddTransient<IDishesOrdenRepository, DisheOrdenRepository>();
             #endregion
         }
     }

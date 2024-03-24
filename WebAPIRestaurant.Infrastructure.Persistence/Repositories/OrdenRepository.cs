@@ -20,13 +20,13 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Repositories
 
         public override async Task<List<Orden>> GetAll()
         {
-            var orden = await _context.Set<Orden>().Include(x => x.Dishes).ToListAsync();
+            var orden = await _context.Set<Orden>().Include(x => x.DishesOrden).ThenInclude(dishes => dishes.Dishe).ToListAsync();
             return orden;
         }
 
         public override async Task<Orden> GetById(int id)
         {
-            var orden = await _context.Set<Orden>().Include(x => x.Dishes).ToListAsync();
+            var orden = await _context.Set<Orden>().Include(x => x.DishesOrden).ThenInclude(dishes => dishes.Dishe).ToListAsync();
             return orden.FirstOrDefault(x => x.Id == id);
         }
     }

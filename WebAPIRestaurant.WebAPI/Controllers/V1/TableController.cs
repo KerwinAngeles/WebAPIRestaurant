@@ -61,8 +61,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             }
         }
         [HttpGet]
-        [Authorize(Roles = "Administrator")]
-        [Authorize(Roles = "Waiter")]
+        [Authorize(Roles = "Waiter, Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -88,8 +87,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Administrator")]
-        [Authorize(Roles = "Waiter")]
+        [Authorize(Roles = "Waiter, Administrator")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -155,13 +153,13 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             try
             {
                 await _tableService.ChangeStatus(id, statusId);
-
-            }catch(Exception ex)
+                return NoContent();
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
 
             }
-            return NoContent();
         }
     }
 }

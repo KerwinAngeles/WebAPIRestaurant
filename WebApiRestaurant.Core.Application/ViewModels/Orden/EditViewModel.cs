@@ -12,6 +12,6 @@ namespace WebAPIRestaurant.Core.Application.ViewModels.Orden
         public string? State { get; set; }
         public int SubTotal { get; set; }
         public int TableId { get; set; }
-        public List<int> Dishes { get; set; } = new List<int>();
+        public List<int> DishesOrden { get; set; } = new List<int>();
     }
 }

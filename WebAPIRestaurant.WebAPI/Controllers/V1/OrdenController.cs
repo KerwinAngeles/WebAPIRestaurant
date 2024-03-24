@@ -10,7 +10,6 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
 {
     [ApiVersion("1.0")]
     [Authorize(Roles = "Waiter")]
-
     public class OrdenController : BaseApiController
     {
         private readonly IOrdenService _ordenService;

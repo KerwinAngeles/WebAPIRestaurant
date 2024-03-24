@@ -9,7 +9,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
 {
     [ApiVersion("1.0")]
     [Authorize(Roles = "Administrator")]
-    
+
     public class IngredientController : BaseApiController
     {
         private readonly IIngredientService _ingredientService;
@@ -21,8 +21,6 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-
         public async Task<IActionResult> Create(SaveIngredientViewModel sv)
         {
             if (!ModelState.IsValid)
@@ -41,13 +39,11 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-
-        public async Task<IActionResult> Update(SaveIngredientViewModel sv)
+        public async Task<IActionResult> Update(SaveIngredientViewModel sv, int id)
         {
             if (!ModelState.IsValid)
             {
@@ -55,8 +51,8 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
             }
             try
             {
-                var searchIngrendient = await _ingredientService.GetById(sv.Id);
-                await _ingredientService.Update(sv, searchIngrendient.Id);
+                var searchIngrendient = await _ingredientService.GetById(id);
+                await _ingredientService.Update(sv, id);
                 return Ok(sv);
             }
             catch(Exception ex)
@@ -70,7 +66,6 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> List()
         {
             if (!ModelState.IsValid)
@@ -95,7 +90,6 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetById(int id)
         {
             if (!ModelState.IsValid)

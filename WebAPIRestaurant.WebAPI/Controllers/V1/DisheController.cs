@@ -8,7 +8,7 @@ using WebAPIRestaurant.Core.Application.ViewModels.Dishe;
 namespace WebAPIRestaurant.WebAPI.Controllers.V1
 {
     [ApiVersion("1.0")]
-    //[Authorize(Roles = "Administrator")]
+    [Authorize(Roles = "Administrator")]
     public class DisheController : BaseApiController
     {
         private readonly IDisheService _disheService;
@@ -54,7 +54,7 @@ namespace WebAPIRestaurant.WebAPI.Controllers.V1
                 await _disheService.Update(sv, id);
                 return Ok(sv);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }

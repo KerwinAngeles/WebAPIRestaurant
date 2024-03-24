@@ -22,8 +22,10 @@ namespace WebAPIRestaurant.Infrastructure.Persistence.Repositories
         public override async Task<Table> GetById(int id)
         {
             var table = await _context.Set<Table>()
+                .Include(x => x.Status)
                 .Include(x => x.Orden)
-                .ThenInclude(x => x.Dishes).ToListAsync();
+                .ThenInclude(x => x.DishesOrden)
+                .ThenInclude(x => x.Dishe).ToListAsync();
             return table.FirstOrDefault(x => x.Id == id);
         }
 

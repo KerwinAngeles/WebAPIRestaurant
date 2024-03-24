@@ -18,61 +18,45 @@ namespace WebAPIRestaurant.Core.Application.Services
         private readonly IOrdenRepository _OrdenRepository;
         private readonly ITableRepository _TableRepository;
         private readonly IDisheRepository _disheRepository;
+        private readonly IDishesOrdenRepository _dishesOrdenRepository;
         private readonly IMapper _mapper;
 
-        public OrdenService(IOrdenRepository ordenRepository, IMapper mapper, ITableRepository tableRepository, IDisheRepository disheRepository) : base(ordenRepository, mapper)
+        public OrdenService(IOrdenRepository ordenRepository, IMapper mapper, ITableRepository tableRepository, IDisheRepository disheRepository, IDishesOrdenRepository dishesOrdenRepository) : base(ordenRepository, mapper)
         {
             _OrdenRepository = ordenRepository;
             _TableRepository = tableRepository;
             _mapper = mapper;
             _disheRepository = disheRepository;
+            _dishesOrdenRepository = dishesOrdenRepository;
         }
 
         public override async Task Add (SaveOrdenViewModel sv)
         {
-            List<Dishe> dishe = await _disheRepository.GetAll();
+            List<DishesOrden> dishesOrden = sv.DishesOrden.Select(disheId => new DishesOrden{ DishesId = disheId}).ToList();
             var tableId = await _TableRepository.GetById(sv.TableId);
 
             Orden orden = new Orden();
-
             orden.Id = sv.Id;
             orden.SubTotal = sv.SubTotal;
             orden.State = StateOrden.EnProceso.ToString();
+            orden.DishesOrden = dishesOrden;
             orden.Table = tableId;
-            orden.Dishes = new List<Dishe>();
-
-            foreach (var item in sv.Dishes)
-            {
-                var dish = dishe.FirstOrDefault(x => x.Id == item);
-                if(dish != null)
-                {
-                    orden.Dishes.Add(dish);
-                }
-            }
-            //await _OrdenRepository.AddAsync(orden);
-            await base.Add(sv);
-
+            await _OrdenRepository.AddAsync(orden);
         }
 
         public async Task UpdateOrden(EditViewModel sv, int id)
         {
             var orden = await _OrdenRepository.GetById(id);
-            List<Dishe> dishe = await _disheRepository.GetAll();
-
+            var allDisheOrden = await _dishesOrdenRepository.GetAllDishesOrdenById(id);
+            foreach (var item in allDisheOrden)
+            {
+                var dishesOrden = _dishesOrdenRepository.DeleteAllDisheById(item);
+            }
             if (orden != null)
             {
                 orden.SubTotal = sv.SubTotal;
                 orden.State = sv.State;
-                orden.Dishes = new List<Dishe>();
-
-                foreach (var item in sv.Dishes)
-                {
-                    var dish = dishe.FirstOrDefault(x => x.Id == item);
-                    if (dish != null)
-                    {
-                        orden.Dishes.Add(dish);
-                    }
-                }
+                orden.DishesOrden = sv.DishesOrden.Select(dishesId => new DishesOrden { DishesId = dishesId }).ToList();
             }
 
             await _OrdenRepository.UpdateAsync(orden, id);
@@ -82,9 +66,10 @@ namespace WebAPIRestaurant.Core.Application.Services
             var orden = await _OrdenRepository.GetAll();
             return orden.Select(x => new OrdenViewModel
             {
+                Id = x.Id,
                 SubTotal = x.SubTotal,
                 State = x.State,
-                DishesNames = x.Dishes.Select(y => y.Name).ToList()
+                DishesNames = x.DishesOrden.Select(x => x.Dishe.Name).ToList(),
             }).ToList();
 
         }
@@ -99,8 +84,7 @@ namespace WebAPIRestaurant.Core.Application.Services
                 orden.Id = (int)tableOrdenId.OrdenId;
 
             }
-            //await _OrdenRepository.DeleteAsync(orden);
-            await base.Delete(id);
+            await _OrdenRepository.DeleteAsync(orden);
         }
 
         public override async Task<OrdenViewModel> GetById(int id)
@@ -110,9 +94,10 @@ namespace WebAPIRestaurant.Core.Application.Services
             if (orden != null)
             {
                 OrdenViewModel ordenViewModel = new();
+                ordenViewModel.Id = orden.Id;
                 ordenViewModel.SubTotal = orden.SubTotal;
                 ordenViewModel.State = orden.State;
-                ordenViewModel.DishesNames = orden.Dishes.Select(x => x.Name).ToList();
+                ordenViewModel.DishesNames = orden.DishesOrden.Select(x => x.Dishe.Name).ToList();
                 return ordenViewModel;
             }
             else

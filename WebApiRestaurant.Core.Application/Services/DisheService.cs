@@ -35,14 +35,8 @@ namespace WebAPIRestaurant.Core.Application.Services
             dishe.Price = sv.Price;
             dishe.CantPerson = sv.CantPerson;
             dishe.DisheCategory = sv.DisheCategory;
-            if(dishe.OrdenId != null)
-            {
-                dishe.OrdenId = sv.OrdenId;
-
-            }
             dishe.DishesIngredients = disheIngredients;
-            //await _DisheRepository.AddAsync(dishe);
-            await base.Add(sv);
+            await _DisheRepository.AddAsync(dishe);
         }
 
         public override async Task Update(SaveDisheViewModel sv, int id)
@@ -60,7 +54,6 @@ namespace WebAPIRestaurant.Core.Application.Services
             {
                 dishe.Name = sv.Name;
                 dishe.Price = sv.Price;
-                dishe.OrdenId = sv.OrdenId;
                 dishe.CantPerson = sv.CantPerson;
                 dishe.DisheCategory= sv.DisheCategory;
                 dishe.DishesIngredients = sv.DishesIngredients.Select(ingredient => new DisheIngredient { IngredientId = ingredient }).ToList();
